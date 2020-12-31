@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { setIsLoading, addConfirmed, addRecovered, addDeath, addCountries } from '../redux/actions'
 import { useSelector, useDispatch } from 'react-redux'
-import CountrySelectBox from '../components/countryBox'
+import CountrySelectBox from '../components/CountryBox'
 import SelectedCountry from '../components/SelectedCountry'
 import MainCards from '../components/MainCards'
 
