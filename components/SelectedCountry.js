@@ -14,13 +14,13 @@ const SelectedCountry = () => {
       <style jsx>{`
         .container {
           line-height: 1.5;
-          font-size: 1.5rem;
+          font-size: 1rem;
         }
         code {
           background: #fafafa;
           border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
+          font-size: 0.8rem;
+          font-weight: bold;
           font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
             DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
         }
