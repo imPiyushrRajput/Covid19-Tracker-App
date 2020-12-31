@@ -1,65 +1,206 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import { useEffect } from 'react'
+import { setIsLoading, addConfirmed, addRecovered, addDeath, addCountries } from '../redux/actions'
+import { useSelector, useDispatch } from 'react-redux'
+import CountrySelectBox from '../components/countryBox'
+import SelectedCountry from '../components/SelectedCountry'
+import MainCards from '../components/MainCards'
 
-export default function Home() {
+const Home = () => {
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        dispatch(setIsLoading(true))
+
+        const pGeneralInfo = await fetch('https://covid19.mathdro.id/api')
+        const pCountryInfo = await fetch('https://covid19.mathdro.id/api/countries')
+
+        const [generalInfo, countryInfo] = await Promise.all([pGeneralInfo, pCountryInfo])
+
+        const { confirmed, deaths, recovered } = await generalInfo.json()
+        const countries = await countryInfo.json()
+
+        dispatch(addConfirmed(confirmed.value))
+        dispatch(addRecovered(recovered.value))
+        dispatch(addDeath(deaths.value))
+        dispatch(addCountries(countries))
+
+        dispatch(setIsLoading(false))
+      } catch(e) {
+        dispatch(setIsLoading(false))
+      }
+    }
+
+    fetchData()
+  }, [])
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
+    <div className="main">
+      <h1 className="title">
+              Welcome to <a href="/">Covid19 Tracker App</a>
+      </h1>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+      <p className="description">
+      Get Information about the anomalies brought about by <code>Covid19 or Corona Virus</code>
+      </p>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+      <CountrySelectBox />
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+      <div className="grid">
+            <MainCards />
+      </div>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+      <SelectedCountry />
+    </div>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
+  <footer>
+      <div>
+        Powered by&nbsp;&nbsp;
         <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+          href="https://nextjs.org/"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
+          <b>Next.js</b>
         </a>
-      </footer>
-    </div>
+        &nbsp;&nbsp;&&nbsp;&nbsp;
+        <a
+          href="https://zeit.co"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <b>Zeit Now</b>
+        </a>
+      </div>
+
+      <div>
+        Data Source from&nbsp;&nbsp;
+        <a
+          href="https://covid19.mathdro.id/api"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <b>Mathdro's API</b>
+        </a>
+      </div>
+
+      <div>
+        Made By&nbsp;&nbsp;
+        <a
+          href="https://akashwho.codes"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <b>Akash Rajpurohit</b>
+        </a>
+      </div>
+    </footer>
+
+      <style jsx>{`
+        .container {
+          min-height: 100vh;
+          padding: 0 0.5rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+  
+        .main {
+          padding: 0;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+  
+        footer {
+          width: 100%;
+          height: 100px;
+          padding: 0 20px;
+          border-top: 1px solid #eaeaea;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+  
+        .title a {
+          color: #0070f3;
+          text-decoration: none;
+        }
+  
+        .title a:hover,
+        .title a:focus,
+        .title a:active {
+          text-decoration: underline;
+        }
+  
+        .title {
+          margin: 0;
+          line-height: 1.15;
+          font-size: 4rem;
+        }
+  
+        .title,
+        .description {
+          text-align: center;
+        }
+  
+        .description {
+          line-height: 1.5;
+          font-size: 1.5rem;
+        }
+  
+        code {
+          background: #fafafa;
+          border-radius: 5px;
+          padding: 0.75rem;
+          font-size: 1.1rem;
+          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
+            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+        }
+  
+        .grid {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-wrap: wrap;
+  
+          width: 900px;
+          margin-top: 3rem;
+        }
+  
+        @media (max-width: 600px) {
+          .grid {
+            width: 100%;
+            flex-direction: column;
+          }
+        }
+      `}</style>
+
+      <style jsx global>{`
+        html,
+        body {
+          padding: 0;
+          margin: 0;
+          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+            Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+        }
+  
+        * {
+          box-sizing: border-box;
+        }
+      `}</style>
+      </>
   )
 }
+export default Home
